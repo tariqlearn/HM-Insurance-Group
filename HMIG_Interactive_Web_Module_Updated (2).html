@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HM Insurance Group — Self-Funded Plans & Stop Loss</title>
+<style>
+:root{
+  --navy:#003a59; --blue:#005a87; --cyan:#0288d1; --sky:#e8f5fb;
+  --bg:#f4f7f9; --card:#fff; --text:#243746; --muted:#65757f;
+  --green:#2e7d32; --orange:#f57c00; --red:#c62828; --line:#dbe4e9;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input{font:inherit}
+.app{min-height:100vh;display:flex;flex-direction:column}
+header{height:74px;background:linear-gradient(110deg,var(--navy),#075e83);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 4vw;box-shadow:0 2px 12px #0002}
+.brand h1{font-size:18px;margin:0;font-weight:700}.brand p{font-size:12px;margin:4px 0 0;color:#c8dce6}
+.progress-wrap{display:flex;align-items:center;gap:12px}.progress{width:180px;height:7px;border-radius:10px;background:#ffffff33;overflow:hidden}.progress i{display:block;height:100%;width:10%;background:#4fc3f7;transition:.35s}
+#counter{font-size:13px;min-width:45px;text-align:right}
+main{flex:1;display:flex;justify-content:center;padding:28px 3vw}
+.slide{display:none;width:min(1100px,100%);min-height:640px;background:#fff;border-radius:16px;box-shadow:0 10px 35px #163b4a12;padding:42px;position:relative;overflow:hidden}
+.slide.active{display:block;animation:enter .35s ease}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+h2{margin:0;color:var(--blue);font-size:30px}.subtitle{color:var(--muted);margin:8px 0 30px;font-size:15px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;transition:.2s;box-shadow:0 2px 8px #00000008}
+.clickable{cursor:pointer}.clickable:hover{transform:translateY(-3px);box-shadow:0 8px 20px #00000012}.selected{border-color:var(--cyan)!important;background:#eaf7fd!important}
+.num{font-size:28px;font-weight:800;color:var(--blue)}.small{font-size:13px;color:var(--muted)}
+.icon{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:#e6f4fb;color:var(--blue);font-size:22px;margin-bottom:12px}
+.btn{border:0;border-radius:8px;padding:11px 18px;background:var(--blue);color:white;font-weight:700;cursor:pointer;transition:.2s}.btn:hover{background:var(--navy)}.btn.secondary{background:#fff;color:var(--blue);border:1px solid var(--blue)}.btn:disabled{opacity:.4;cursor:not-allowed}
+footer{height:78px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4vw;background:#fff}
+.footer-mid{color:var(--muted);font-size:13px}.hidden{display:none!important}
+.reveal{margin-top:20px;padding:18px;border-left:5px solid var(--cyan);background:#f3faff;border-radius:8px}
+.metric{min-height:145px;text-align:center}.metric .num{font-size:32px}.metric .label{font-weight:600;margin-top:4px}.detail{margin-top:22px;background:#eef8fc;border-radius:12px;padding:18px}
+.terms .card{min-height:190px;display:flex;flex-direction:column;justify-content:center;text-align:center}
+.flip{font-size:13px;line-height:1.55}.flip strong{display:block;font-size:20px;color:var(--blue);margin-bottom:8px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-items:center}.flow .step{text-align:center;position:relative}.flow .step:not(:last-child):after{content:"→";position:absolute;right:-18px;top:40%;font-size:26px;color:#91a8b5}
+.stepbox{padding:20px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;min-height:160px}
+.claims{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.claim{padding:15px 8px;text-align:center}.claim .amount{font-size:20px;font-weight:800;color:var(--blue)}
+.sim-layout{display:grid;grid-template-columns:1.25fr .75fr;gap:24px}.meter{height:18px;border-radius:20px;background:linear-gradient(90deg,#b8ddb9 0 25%,#ffd99b 25% 50%,#f5a0a0 50%);position:relative;margin:28px 0 10px}.needle{position:absolute;top:-10px;width:3px;height:38px;background:var(--navy);transition:.3s}.needle:before{content:"";position:absolute;top:-7px;left:-6px;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:9px solid var(--navy)}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:12px}.read{padding:18px;border-radius:10px;background:#f8fafc;border:1px solid var(--line)}.read .value{font-size:26px;font-weight:800;color:var(--blue);margin-top:5px}.risk{font-weight:800}.low{color:var(--green)}.moderate{color:var(--orange)}.high{color:var(--red)}
+.stoploss{border:1px solid #b7d9e8;background:#eef9fe;border-radius:14px;padding:22px;text-align:center}.shield{font-size:54px}.active-badge{display:inline-block;background:#e8f5e9;color:var(--green);font-weight:800;padding:7px 12px;border-radius:20px;margin:8px}
+
+.interactive-flow{position:relative;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:48px 0 22px}
+.flow-line{position:absolute;left:8%;right:8%;top:48px;height:3px;background:#cfe2eb;z-index:0}
+.sf-step{position:relative;z-index:1;border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px 10px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;min-height:145px;transition:.25s;box-shadow:0 3px 10px #00000008}
+.sf-step:hover{transform:translateY(-5px);box-shadow:0 10px 22px #00000014;border-color:#9dcde1}
+.sf-step.active{border:2px solid var(--cyan);background:#eef9fe;transform:translateY(-4px);box-shadow:0 10px 24px #0288d122}
+.sf-number{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+.sf-icon{font-size:32px;margin-top:12px}.sf-step strong{font-size:15px}.sf-step .small{font-size:12px}
+.sf-detail{display:flex;align-items:center;gap:18px;padding:20px 24px;border-radius:13px;background:#f3faff;border-left:5px solid var(--cyan);min-height:105px;animation:enter .25s ease}
+.sf-detail-icon{font-size:42px;width:58px;text-align:center}.sf-detail h3{margin:3px 0 5px;color:var(--blue)}.sf-detail p{margin:0;color:var(--muted)}
+.sf-risk{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;margin-top:18px;padding:15px 18px;border:1px solid var(--line);border-radius:12px;background:#fff;text-align:center}
+.sf-risk strong{display:block;color:var(--blue);margin-top:3px}.risk-arrow{font-size:24px;color:var(--cyan)}
+@media(max-width:800px){.interactive-flow{grid-template-columns:1fr 1fr}.flow-line{display:none}.sf-risk{grid-template-columns:1fr}.risk-arrow{transform:rotate(90deg)}}
+.slider{width:100%;accent-color:var(--blue)}.ticks{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}
+.scenario{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}.outcome{border:1px solid var(--line);border-radius:12px;padding:18px;cursor:pointer}.outcome:hover{border-color:var(--cyan)}.outcome.selected{border-width:2px}
+.quiz-option{width:100%;text-align:left;padding:16px;border:1px solid var(--line);background:#fff;border-radius:10px;margin:7px 0;cursor:pointer}.quiz-option.selected{background:#eaf7fd;border-color:var(--cyan)}.feedback{padding:18px;border-radius:10px;margin-top:15px}.correct{background:#e8f5e9;color:#205c24}.incorrect{background:#ffebee;color:#8e2020}
+.summary{background:linear-gradient(135deg,var(--navy),#075e83);color:#fff}.summary h2{color:#fff}.summary .card{color:var(--text)}
+@media(max-width:800px){.slide{padding:25px;min-height:650px}.grid2,.grid3,.sim-layout,.scenario{grid-template-columns:1fr}.claims{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr 1fr}.flow .step:not(:last-child):after{display:none}header{padding:0 18px}.progress{width:100px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand"><h1>HM Insurance Group</h1><p>Self-Funded Plans & Stop Loss Insurance</p></div>
+  <div class="progress-wrap"><div class="progress"><i id="progress"></i></div><span id="counter">1 / 11</span></div>
+</header>
+
+<main>
+<!-- 1 -->
+<section class="slide active" data-title="Welcome & Objectives">
+<h2>Welcome & Module Objectives</h2><p class="subtitle">Digital Learning Module · Interactive Web Prototype</p>
+<div class="grid2" style="margin-top:55px">
+<div class="card"><div class="icon">1</div><h3>Understand HM Insurance Group</h3><p class="small">Review the purpose and function of HM Insurance Group (HMIG) — its history, footprint, and role as a stop loss carrier.</p></div>
+<div class="card"><div class="icon">2</div><h3>Learn Key Terms & Facts</h3><p class="small">Discover key terms and facts related to self-funded plans and stop loss insurance, and see how they connect in practice.</p></div>
+</div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Company Overview">
+<h2>Meet HM Insurance Group</h2><p class="subtitle">Founded in 1990 by Highmark</p>
+<div class="grid2">
+<div class="card"><h3>A National Footprint</h3><ul class="small" style="line-height:2"><li>Licensed in all 50 states and the District of Columbia</li><li>18 offices nationwide</li><li>Insures more than 1,000 self-funded plans</li><li>Ranked year over year as one of the top stop loss carriers nationally.</li></ul></div>
+<div class="card"><h3>Three Underwriting Carriers</h3>
+<div class="outcome" onclick="selectCarrier(this,'HM Life Insurance Company — Pittsburgh, Pennsylvania')">HM Life Insurance Company<br><span class="small">Pittsburgh, Pennsylvania</span></div>
+<div class="outcome" onclick="selectCarrier(this,'HM Life Insurance Company — New York, New York')">HM Life Insurance Company<br><span class="small">New York, New York</span></div>
+<div class="outcome" onclick="selectCarrier(this,'Highmark Casualty Insurance Company — Pittsburgh, Pennsylvania')">Highmark Casualty Insurance Company<br><span class="small">Pittsburgh, Pennsylvania</span></div>
+<div id="carrierNote" class="detail hidden"></div></div>
+</div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="Interactive Dashboard">
+<h2>HMIG by the Numbers</h2><p class="subtitle">Click each metric to reveal more information.</p>
+<div class="grid3">
+<div class="card metric clickable" onclick="metric(this,'1990','Highmark launched HMIG in 1990 to give employers a dedicated stop loss partner as self-funding grew in popularity.')"><div class="num">1990</div><div class="label">Founded by Highmark</div></div>
+<div class="card metric clickable" onclick="metric(this,'50 + D.C.','Licensed in all 50 states and the District of Columbia.')"><div class="num">50 + D.C.</div><div class="label">States licensed</div></div>
+<div class="card metric clickable" onclick="metric(this,'18','HMIG has 18 offices nationwide.')"><div class="num">18</div><div class="label">Offices nationwide</div></div>
+<div class="card metric clickable" onclick="metric(this,'1,000+','HMIG insures more than 1,000 self-funded plans.')"><div class="num">1,000+</div><div class="label">Self-funded plans insured</div></div>
+<div class="card metric clickable" onclick="metric(this,'~$1B','Approximately $1B in annual revenue.')"><div class="num">~$1B</div><div class="label">Annual revenue</div></div>
+<div class="card metric clickable" onclick="metric(this,'$12M','$12M in stop loss savings generated.')"><div class="num">$12M</div><div class="label">Stop loss savings generated</div></div>
+</div><div id="metricDetail" class="detail hidden"></div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Key Terms">
+<h2>Key Terms You Need to Know</h2><p class="subtitle">Click each card to flip and reveal the definition.</p>
+<div class="grid3 terms">
+<div class="card clickable" onclick="flip(this,'Underwriting','The process of reviewing risk information to determine policy terms, exclusions, and/or premium loading.')"><div class="icon">↻</div><strong>Underwriting</strong><span class="small">Click to Reveal</span></div>
+<div class="card clickable" onclick="flip(this,'Self-Funded Plan','A plan in which the employer takes on most or all of the cost of benefit claims. The insurance company manages the payments, but the employer pays the claims.')"><div class="icon">↻</div><strong>Self-Funded Plan</strong><span class="small">Click to Reveal</span></div>
+<div class="card clickable" onclick="flip(this,'Stop Loss','Coverage that protects a self-funded plan against large financial risks by reimbursing costs above a set threshold.')"><div class="icon">↻</div><strong>Stop Loss</strong><span class="small">Click to Reveal</span></div>
+</div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="Self-Funded Plans">
+<h2>How a Self-Funded Plan Works</h2>
+<p class="subtitle">Click each step to follow the claim journey and see who carries the financial risk.</p>
+
+<div class="interactive-flow" id="sfFlow">
+  <div class="flow-line"></div>
+  <button class="sf-step active" onclick="showSFStep(1)">
+    <span class="sf-number">1</span><span class="sf-icon">👤</span>
+    <strong>Employee</strong><span class="small">Receives care</span>
+  </button>
+  <button class="sf-step" onclick="showSFStep(2)">
+    <span class="sf-number">2</span><span class="sf-icon">🏥</span>
+    <strong>Insurance Company</strong><span class="small">Processes claim</span>
+  </button>
+  <button class="sf-step" onclick="showSFStep(3)">
+    <span class="sf-number">3</span><span class="sf-icon">🏢</span>
+    <strong>Employer</strong><span class="small">Funds the claim</span>
+  </button>
+  <button class="sf-step" onclick="showSFStep(4)">
+    <span class="sf-number">4</span><span class="sf-icon">✓</span>
+    <strong>Benefit Paid</strong><span class="small">Claim settled</span>
+  </button>
+</div>
+
+<div class="sf-detail" id="sfDetail">
+  <div class="sf-detail-icon" id="sfDetailIcon">👤</div>
+  <div>
+    <div class="small" id="sfDetailStep">STEP 1 OF 4</div>
+    <h3 id="sfDetailTitle">Employee</h3>
+    <p id="sfDetailText">Receives care and files a medical claim.</p>
+  </div>
+</div>
+
+<div class="sf-risk">
+  <div>
+    <span class="small">WHO CARRIES THE FINANCIAL RISK?</span>
+    <strong>Employer</strong>
+  </div>
+  <div class="risk-arrow">→</div>
+  <div>
+    <span class="small">INSURANCE COMPANY ROLE</span>
+    <strong>Claims administration</strong>
+  </div>
+</div>
+
+<div class="reveal"><strong>Key idea:</strong> the employer — not the insurance company — carries the financial risk for claims. The insurer's role is claims administration, not risk-bearing.</div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Risk Simulator">
+<h2>Claims Risk Simulator</h2><p class="subtitle">Click claims to add exposure to the employer's self-funded plan.</p>
+<div class="sim-layout">
+<div>
+<div class="claims">
+<div class="card claim clickable" onclick="addClaim(1500,this)"><strong>Routine Medical Claim</strong><div class="amount">$1,500</div></div>
+<div class="card claim clickable" onclick="addClaim(6000,this)"><strong>Specialist Claim</strong><div class="amount">$6,000</div></div>
+<div class="card claim clickable" onclick="addClaim(28000,this)"><strong>Hospital Claim</strong><div class="amount">$28,000</div></div>
+<div class="card claim clickable" onclick="addClaim(85000,this)"><strong>Major Medical Claim</strong><div class="amount">$85,000</div></div>
+<div class="card claim clickable" onclick="addClaim(300000,this)"><strong>Catastrophic Claim</strong><div class="amount">$300,000+</div></div>
+</div>
+<div class="meter"><div id="needle" class="needle" style="left:4%"></div></div>
+<div class="ticks"><span>LOW</span><span>MODERATE</span><span>HIGH</span></div>
+<div class="readout" style="margin-top:18px">
+<div class="read"><div class="small">ClaimAmount</div><div id="claimAmount" class="value">$0</div></div>
+<div class="read"><div class="small">RiskLevel</div><div id="riskLevel" class="value risk low">Low</div></div>
+</div>
+<button class="btn secondary" style="margin-top:14px" onclick="resetSim()">Reset Simulation</button>
+</div>
+<div id="stopLossPanel" class="stoploss hidden">
+<div class="shield">🛡️</div><div class="active-badge">STOP LOSS ACTIVATED</div>
+<h3>Employer's Protected Exposure</h3>
+<div id="protectedExposure" class="num">$100,000</div>
+<p class="small">Once claims cross the high-risk threshold, Stop Loss insurance steps in and reimburses the self-funded plan for costs above the threshold.</p>
+</div>
+</div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="Financial Exposure Slider">
+<h2>Financial Exposure Slider</h2><p class="subtitle">Drag the slider to see how Stop Loss Protection activates at higher thresholds.</p>
+<div class="card" style="margin-top:55px">
+<input id="exposureSlider" class="slider" type="range" min="0" max="500000" step="10000" value="0" oninput="updateExposure(this.value)">
+<div class="ticks" style="margin-top:10px"><span>$0</span><span>$50K</span><span>$100K</span><span>$250K</span><span>$500K+</span></div>
+<div class="readout" style="margin-top:28px">
+<div class="read"><div class="small">CLAIM EXPOSURE</div><div id="exposureValue" class="value">$0</div></div>
+<div class="read"><div class="small">RISK LEVEL</div><div id="exposureRisk" class="value risk low">Low</div></div>
+</div>
+<div id="exposureStatus" class="detail" style="text-align:center"><strong>STOP LOSS PROTECTION</strong><br><span class="small">Not Yet Active</span></div>
+</div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Underwriting Journey">
+<h2>Underwriting Decision Journey</h2><p class="subtitle">Choose an outcome after medical history review.</p>
+<div class="scenario">
+<div class="card"><div class="icon">1</div><h3>Medical History Review</h3><p class="small">The applicant's medical history is submitted to the underwriter for review.</p><div style="text-align:center;font-size:32px">↓</div><div class="card" style="text-align:center;background:#eef8fc"><strong>Underwriting Review</strong></div></div>
+<div>
+<div class="outcome" onclick="underwrite(this,'Standard Approval','Medical history shows no significant risk factors. Policy is issued at the standard premium rate with no exclusions.')"><strong>A · Standard Approval</strong><p class="small">No significant risk factors.</p></div>
+<div class="outcome" onclick="underwrite(this,'Approval with Exclusion','A pre-existing condition is identified. Policy is issued but excludes coverage related to that specific condition.')"><strong>B · Approval with Exclusion</strong><p class="small">Specific condition is excluded.</p></div>
+<div class="outcome" onclick="underwrite(this,'Approval with Premium Loading','Elevated risk factors are found. Policy is issued with a higher-than-standard premium to offset the added risk.')"><strong>C · Approval with Premium Loading</strong><p class="small">Higher-than-standard premium.</p></div>
+<div id="uwDetail" class="detail hidden"></div>
+</div>
+</div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="Knowledge Check">
+<h2>Check Your Understanding</h2><p class="subtitle">Select the best answer and submit.</p>
+<div class="card" style="margin-bottom:18px"><strong>An employer wants to protect their self-funded plan against a catastrophic claim that could threaten company cash flow. Which coverage addresses this risk?</strong></div>
+<div id="quiz">
+<button class="quiz-option" onclick="chooseQuiz(this,'A')">A. Standard medical underwriting</button>
+<button class="quiz-option" onclick="chooseQuiz(this,'B')">B. Stop loss insurance</button>
+<button class="quiz-option" onclick="chooseQuiz(this,'C')">C. A pre-existing condition exclusion</button>
+<button class="quiz-option" onclick="chooseQuiz(this,'D')">D. A higher monthly premium alone</button>
+</div>
+<button class="btn" style="margin-top:15px" onclick="submitQuiz()">Submit Answer</button>
+<div id="quizFeedback" class="hidden"></div>
+</section>
+
+<!-- 10 -->
+<section class="slide summary" data-title="Summary & Completion">
+<h2>You've Completed This Module</h2><p style="color:#d8eaf2">Thank you for exploring HM Insurance Group.</p>
+<div class="grid2" style="margin-top:50px">
+<div class="card"><div class="icon">✓</div><h3>Reviewed HMIG</h3><p class="small">Reviewed the purpose and function of HM Insurance Group.</p></div>
+<div class="card"><div class="icon">✓</div><h3>Learned Key Concepts</h3><p class="small">Learned key terms and facts on self-funded plans and stop loss insurance.</p></div>
+</div>
+<div style="margin-top:35px;text-align:center"><button class="btn" onclick="go(1)">Restart Module</button></div>
+</section>
+
+</main>
+<footer>
+<button id="prev" class="btn secondary" onclick="prevSlide()">← Previous</button>
+<div class="footer-mid" id="title">Welcome & Objectives</div>
+<button id="next" class="btn" onclick="nextSlide()">Next →</button>
+</footer>
+</div>
+
+<script>
+let slide=1, total=10, claim=0, quizAnswer=null;
+
+const sfSteps = {
+  1:{icon:'👤',title:'Employee',text:'Receives care and files a medical claim.'},
+  2:{icon:'🏥',title:'Insurance Company',text:'Administers and processes the claim.'},
+  3:{icon:'🏢',title:'Employer',text:'Funds and pays the cost of the claim — this is where the financial risk sits in a self-funded plan.'},
+  4:{icon:'✓',title:'Benefit Paid',text:"The employee's claim is settled and the benefit is paid."}
+};
+function showSFStep(n){
+  document.querySelectorAll('.sf-step').forEach((x,i)=>x.classList.toggle('active',i===n-1));
+  const s=sfSteps[n];
+  document.getElementById('sfDetailIcon').textContent=s.icon;
+  document.getElementById('sfDetailStep').textContent='STEP '+n+' OF 4';
+  document.getElementById('sfDetailTitle').textContent=s.title;
+  document.getElementById('sfDetailText').textContent=s.text;
+}
+
+
+function update(){
+  document.querySelectorAll('.slide').forEach((s,i)=>s.classList.toggle('active',i===slide-1));
+  document.getElementById('progress').style.width=(slide/total*100)+'%';
+  document.getElementById('counter').textContent=slide+' / '+total;
+  document.getElementById('title').textContent=document.querySelectorAll('.slide')[slide-1].dataset.title;
+  document.getElementById('prev').disabled=slide===1;
+  document.getElementById('next').disabled=slide===total;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function go(n){slide=Math.max(1,Math.min(total,n));update()}
+function nextSlide(){go(slide+1)} function prevSlide(){go(slide-1)}
+
+function selectCarrier(el,text){
+  el.parentElement.querySelectorAll('.outcome').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected');
+  const n=document.getElementById('carrierNote'); n.classList.remove('hidden'); n.innerHTML='<strong>Selected carrier</strong><br>'+text+'<br><span class="small">Highmark Inc. is the parent company for all three carriers.</span>';
+}
+function metric(el,note,text){
+  el.parentElement.querySelectorAll('.metric').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');
+  const d=document.getElementById('metricDetail');d.classList.remove('hidden');d.innerHTML='<strong>'+note+'</strong><br><span class="small">'+text+'</span>';
+}
+function flip(el,title,text){
+  if(el.dataset.flipped){el.innerHTML='<div class="icon">↻</div><strong>'+title+'</strong><span class="small">Click to Reveal</span>';delete el.dataset.flipped;return}
+  el.dataset.flipped='1';el.innerHTML='<strong>'+title+'</strong><p class="flip">'+text+'</p><span class="small">Click to flip back</span>';el.classList.add('selected');
+}
+function addClaim(v,el){
+  claim+=v; el.classList.add('selected');
+  document.getElementById('claimAmount').textContent='$'+claim.toLocaleString();
+  let risk='Low', cls='low', pos=Math.min(96,(claim/400000)*100);
+  if(claim>=100000){risk='High';cls='high';document.getElementById('stopLossPanel').classList.remove('hidden');document.getElementById('protectedExposure').textContent='$100,000'}
+  else if(claim>=25000){risk='Moderate';cls='moderate'}
+  else document.getElementById('stopLossPanel').classList.add('hidden');
+  const r=document.getElementById('riskLevel');r.textContent=risk;r.className='value risk '+cls;
+  document.getElementById('needle').style.left=pos+'%';
+}
+function resetSim(){
+  claim=0;document.getElementById('claimAmount').textContent='$0';const r=document.getElementById('riskLevel');r.textContent='Low';r.className='value risk low';document.getElementById('needle').style.left='4%';document.getElementById('stopLossPanel').classList.add('hidden');document.querySelectorAll('.claim').forEach(x=>x.classList.remove('selected'));
+}
+function updateExposure(v){
+  v=Number(v);document.getElementById('exposureValue').textContent='$'+v.toLocaleString();
+  let risk='Low',cls='low';if(v>=100000){risk='High';cls='high'}else if(v>=25000){risk='Moderate';cls='moderate'}
+  const r=document.getElementById('exposureRisk');r.textContent=risk;r.className='value risk '+cls;
+  const s=document.getElementById('exposureStatus');
+  if(v>=250000)s.innerHTML='<strong>STOP LOSS PROTECTION</strong><br><span class="active-badge">Active — Reimbursement Active</span><p class="small">Coverage activates at the $250K threshold in this interactive example.</p>';
+  else s.innerHTML='<strong>STOP LOSS PROTECTION</strong><br><span class="small">Not Yet Active</span>';
+}
+function underwrite(el,title,text){
+  el.parentElement.querySelectorAll('.outcome').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');
+  const d=document.getElementById('uwDetail');d.classList.remove('hidden');d.innerHTML='<strong>'+title+'</strong><br><span class="small">'+text+'</span>';
+}
+function chooseQuiz(el,a){document.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');quizAnswer=a}
+function submitQuiz(){
+  const d=document.getElementById('quizFeedback');d.classList.remove('hidden');
+  if(quizAnswer==='B'){d.className='feedback correct';d.innerHTML='<strong>Correct!</strong><br>Stop Loss insurance reimburses the plan once claims exceed a set threshold, protecting the employer from catastrophic cost.'}
+  else{d.className='feedback incorrect';d.innerHTML='<strong>Try Again.</strong><br>Select the coverage specifically designed to protect self-funded plans against large financial risks.'}
+}
+update();
+</script>
+</body>
+</html>
